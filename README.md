@@ -11,7 +11,8 @@ bin/magento module:enable Yireo HyvaCheckoutPostcodeValidator
 ### Usage
 This module implements the Magento `\Magento\Directory\Model\Country\Postcode\ValidatorInterface` in 3 different ways:
 
-- 
+- Client-side (JS) validation directly on postcode input (with a spinner);
+- Lazy client-side (Hyva Checkout validation) based on MageWire validator;
 - The Hyva Checkout form hook `form:build:magewire` is used to allow for the final form submission to be validated;
 
 ### Todos
