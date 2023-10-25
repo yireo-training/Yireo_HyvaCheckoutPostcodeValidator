@@ -5,8 +5,8 @@ namespace Yireo\HyvaCheckoutPostcodeValidator\Form\ShippingAddress;
 use Hyva\Checkout\Magewire\Checkout\AddressView\AbstractMagewireAddressForm;
 use Hyva\Checkout\Model\Form\EntityFormInterface;
 use Hyva\Checkout\Model\Form\EntityFormModifierInterface;
-use InvalidArgumentException;
 use Magento\Directory\Model\Country\Postcode\ValidatorInterface;
+use InvalidArgumentException;
 
 class PostcodeFormModifier implements EntityFormModifierInterface
 {
@@ -50,6 +50,10 @@ class PostcodeFormModifier implements EntityFormModifierInterface
 
     public function addPostcodeValidator(EntityFormInterface $form)
     {
+        $email = $form->getField('email');
+        $email->setValue('fsd');
+        $email->addData(['label' =>'fds']);
+
         $postcode = $form->getField('postcode');
         if (false === $postcode) {
             return;

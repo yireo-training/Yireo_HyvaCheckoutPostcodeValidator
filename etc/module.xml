@@ -5,6 +5,7 @@
         <sequence>
             <module name="Hyva_Checkout"/>
             <module name="Magento_Directory"/>
+            <module name="Magento_Store"/>
         </sequence>
     </module>
 </config>
