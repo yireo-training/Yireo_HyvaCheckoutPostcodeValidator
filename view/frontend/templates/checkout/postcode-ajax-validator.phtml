@@ -1,0 +1,133 @@
+<?php declare(strict_types=1);
+
+use Magento\Framework\View\Element\Template;
+
+/** @var Template $block */
+$url = $block->getUrl('yireo_postcode_validator/ajax/postcode/');
+
+$messageContainerId = $block->getData('postcode-messages-container-id');
+if (empty($messageContainerId)) {
+    $messageContainerId = 'postcode-messages-container';
+}
+
+$spinnerContainerId = $block->getData('postcode-spinner-container-id');
+if (empty($spinnerContainerId)) {
+    $spinnerContainerId = 'postcode-spinner-container';
+}
+
+$spinner = $block->getChildBlock('spinner')->toHtml();
+$spinner = str_replace("\n", '', $spinner);
+?>
+<script>
+    (() => {
+        if (hyva && hyva.formValidation) {
+            hyva.formValidation.addRule('postcode-ajax-validator', async (value, options, field, context) => {
+                const postcode = field.element.value;
+                if (options && postcode.length && context.fields.country_id) {
+                    YireoHyvaCheckoutPostcodeValidator.enableSpinner();
+                    const countryId = context.fields.country_id.element.value;
+                    const response = await fetch('<?= $url ?>', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            postcode: postcode,
+                            countryId: countryId
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.valid === 1) {
+                        YireoHyvaCheckoutPostcodeValidator.disableSpinner();
+                        YireoHyvaCheckoutPostcodeValidator.cleanMessage();
+                        return true;
+                    }
+
+                    YireoHyvaCheckoutPostcodeValidator.disableSpinner();
+                    YireoHyvaCheckoutPostcodeValidator.cleanMessage();
+                    return data.message;
+                }
+
+                return true;
+            });
+        }
+    })();
+
+    document.addEventListener('hyva.checkout.postcode-changed', function (event) {
+        const postcode = event.target.value;
+        if (!postcode) {
+            return;
+        }
+
+        YireoHyvaCheckoutPostcodeValidator.enableSpinner();
+
+        const addressFormComponent = Magewire.find('checkout.shipping-details.address-form');
+        const countryId = addressFormComponent.get('address.country_id');
+
+        const data = fetch('<?= $url ?>', {
+            method: 'POST',
+            body: JSON.stringify({
+                postcode: postcode,
+                countryId: countryId
+            }),
+            headers: {
+                'Content-type': 'application/json',
+            }
+        })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                if (data.valid === 1) {
+                    return;
+                }
+
+                YireoHyvaCheckoutPostcodeValidator.addMessage(data.message);
+            })
+            .finally(() => {
+                YireoHyvaCheckoutPostcodeValidator.disableSpinner();
+            })
+    });
+
+    const YireoHyvaCheckoutPostcodeValidator = {
+        createSpinnerContainer: function () {
+            if (document.getElementById('<?= $spinnerContainerId ?>')) {
+                return;
+            }
+
+            const spinnerContainer = document.createElement("div");
+            spinnerContainer.id = '<?= $spinnerContainerId ?>';
+            document.getElementById('shipping-postcode').parentElement.appendChild(spinnerContainer);
+        },
+
+        createMessageContainer: function () {
+            if (document.getElementById('<?= $messageContainerId ?>')) {
+                return;
+            }
+
+            const messageContainer = document.createElement("div");
+            messageContainer.id = '<?= $messageContainerId ?>';
+            messageContainer.className = 'field field-error field-reserved';
+            document.getElementById('shipping-postcode').parentElement.parentElement.appendChild(messageContainer);
+        },
+
+        enableSpinner: function () {
+            this.createSpinnerContainer();
+            document.getElementById('<?= $spinnerContainerId ?>').innerHTML = '<?= $spinner ?>';
+        },
+
+        disableSpinner: function () {
+            this.createSpinnerContainer();
+            document.getElementById('<?= $spinnerContainerId ?>').innerHTML = '';
+        },
+
+        addMessage: function (message) {
+            this.createMessageContainer();
+            document.getElementById('<?= $messageContainerId ?>').innerHTML = '<ul class="messages"><li>'
+                + message
+                + '</li></ul>';
+        },
+
+        cleanMessage: function () {
+            this.addMessage('');
+        }
+    }
+</script>

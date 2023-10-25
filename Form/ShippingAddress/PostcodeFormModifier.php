@@ -18,6 +18,18 @@ class PostcodeFormModifier implements EntityFormModifierInterface
     public function apply(EntityFormInterface $form): EntityFormInterface
     {
         $form->registerModificationListener(
+            'Yireo_HyvaCheckoutPostcodeValidator::initializePostcode',
+            'form:init',
+            [$this, 'initializePostcode']
+        );
+
+        $form->registerModificationListener(
+            'Yireo_HyvaCheckoutPostcodeValidator::addPostcodeValidator',
+            'form:build',
+            [$this, 'addPostcodeValidator']
+        );
+
+        $form->registerModificationListener(
             'Yireo_HyvaCheckoutPostcodeValidator::validatePostcode',
             'form:build:magewire',
             [$this, 'validatePostcode']
@@ -25,6 +37,27 @@ class PostcodeFormModifier implements EntityFormModifierInterface
 
         return $form;
     }
+
+    public function initializePostcode(EntityFormInterface $form)
+    {
+        $postcode = $form->getField('postcode');
+        if (false === $postcode) {
+            return;
+        }
+
+        $postcode->setAttribute('@change', '$dispatch(\'hyva.checkout.postcode-changed\', $event.target.value)');
+    }
+
+    public function addPostcodeValidator(EntityFormInterface $form)
+    {
+        $postcode = $form->getField('postcode');
+        if (false === $postcode) {
+            return;
+        }
+
+        $postcode->setValidationRule('postcode-ajax-validator');
+    }
+
 
     public function validatePostcode(EntityFormInterface $form, AbstractMagewireAddressForm $component)
     {

@@ -1,5 +1,5 @@
 {
-  "name": "yireo/module-hyva-checkout-postcode-validator",
+  "name": "yireo/magento2-hyva-checkout-postcode-validator",
   "version": "1.0.0",
   "description": "N/A",
   "type": "magento2-module",
