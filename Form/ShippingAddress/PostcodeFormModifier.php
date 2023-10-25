@@ -50,10 +50,6 @@ class PostcodeFormModifier implements EntityFormModifierInterface
 
     public function addPostcodeValidator(EntityFormInterface $form)
     {
-        $email = $form->getField('email');
-        $email->setValue('fsd');
-        $email->addData(['label' =>'fds']);
-
         $postcode = $form->getField('postcode');
         if (false === $postcode) {
             return;
