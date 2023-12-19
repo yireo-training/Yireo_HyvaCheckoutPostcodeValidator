@@ -36,13 +36,13 @@ $spinner = str_replace("\n", '', $spinner);
 
                     const data = await response.json();
                     if (data.valid === 1) {
+                        context.removeMessages(field, options.messagesWrapperClassName);
                         YireoHyvaCheckoutPostcodeValidator.disableSpinner();
-                        YireoHyvaCheckoutPostcodeValidator.cleanMessage();
                         return true;
                     }
 
+                    context.removeMessages(field, options.messagesWrapperClassName);
                     YireoHyvaCheckoutPostcodeValidator.disableSpinner();
-                    YireoHyvaCheckoutPostcodeValidator.cleanMessage();
                     return data.message;
                 }
 
@@ -52,6 +52,8 @@ $spinner = str_replace("\n", '', $spinner);
     })();
 
     document.addEventListener('hyva.checkout.postcode-changed', function (event) {
+        //console.log('hyva.checkout.postcode-changed', Alpine.data('shipping').state);
+
         const postcode = event.target.value;
         if (!postcode) {
             return;
@@ -130,4 +132,14 @@ $spinner = str_replace("\n", '', $spinner);
             this.addMessage('');
         }
     }
+
+    window.hyva.formValidation = new Proxy(window.hyva.formValidation, {
+        apply(target, thisArg, args) {
+            const alpineComponent = target.apply(thisArg, args);
+            alpineComponent.getFoo = function () {
+                return 'bar';
+            };
+            return alpineComponent;
+        }
+    });
 </script>

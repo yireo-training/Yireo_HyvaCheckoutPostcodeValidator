@@ -66,6 +66,9 @@ class PostcodeFormModifier implements EntityFormModifierInterface
             return;
         }
 
+        //$postcode->setAttribute('wire:model.lazy', 'address.postcode');
+        //$postcode->removeAttribute('wire:model.defer');
+
         $country = $form->getField('country_id');
         if (false === $country->getValue()) {
             return;
