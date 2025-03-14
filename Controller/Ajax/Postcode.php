@@ -44,9 +44,7 @@ class Postcode implements HttpPostActionInterface, CsrfAwareActionInterface
 
         try {
             if (false === $this->validator->validate($postcode, $countryId)) {
-                $msg = 'Invalid postcode "'.$postcode.'" for country "'.$countryId.'"';
-
-                return $this->sendResult(false, __($msg));
+                return $this->sendResult(false, __('Invalid postcode "%1" for country "%2"', $postcode, $countryId));
             }
         } catch (InvalidArgumentException $exception) {
             return $this->sendResult(false, __('No validation possible for this country'));
