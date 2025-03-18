@@ -45,7 +45,8 @@ class PostcodeFormModifier implements EntityFormModifierInterface
             return;
         }
 
-        $postcode->setAttribute('@change', '$dispatch(\'hyva.checkout.postcode-changed\', $event.target.value)');
+        // Add a CSP-friendly data attribute as a marker
+        $postcode->setAttribute('data-postcode-dispatch', 'true');
     }
 
     public function addPostcodeValidator(EntityFormInterface $form)

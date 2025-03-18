@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 
 use Magento\Framework\View\Element\Template;
+use Hyva\Theme\ViewModel\HyvaCsp;
+
+/** @var HyvaCsp $hyvaCsp */
 
 /** @var Template $block */
 $url = $block->getUrl('yireo_postcode_validator/ajax/postcode/');
@@ -50,6 +53,25 @@ $spinner = str_replace("\n", '', $spinner);
             });
         }
     })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Find all elements marked with the data attribute
+        const postcodeElements = document.querySelectorAll('[data-postcode-dispatch="true"]');
+
+        postcodeElements.forEach((postcodeElement) => {
+            postcodeElement.addEventListener('change', (event) => {
+                const value = event.target.value;
+
+                // Dispatch the custom event for postcode change
+                const postcodeChangedEvent = new CustomEvent('hyva.checkout.postcode-changed', {
+                    detail: { value: value },
+                });
+
+                document.dispatchEvent(postcodeChangedEvent);
+            });
+        });
+    });
+
 
     document.addEventListener('hyva.checkout.postcode-changed', function (event) {
         //console.log('hyva.checkout.postcode-changed', Alpine.data('shipping').state);
@@ -143,3 +165,4 @@ $spinner = str_replace("\n", '', $spinner);
         }
     });
 </script>
+<?php $hyvaCsp->registerInlineScript(); ?>
