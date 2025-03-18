@@ -77,7 +77,7 @@ class PostcodeFormModifier implements EntityFormModifierInterface
 
         try {
             $isValid = $this->validator->validate($postcode->getValue(), $country->getValue());
-            $isInvalidMessage = __('Invalid postcode "'.$postcode->getValue().'" for country "'.$country->getValue().'"');
+            $isInvalidMessage = __('Invalid postcode "%1" for country "%2"', $postcode->getValue(),$country->getValue());
         } catch (InvalidArgumentException $invalidArgumentException) {
             return;
         }
