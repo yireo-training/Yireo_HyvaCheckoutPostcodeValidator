@@ -1,6 +1,9 @@
 # Yireo HyvaCheckoutPostcodeValidator
 
-**This Magento 2 module adds postcode validation based upon the Magento core `zip_codes.xml` mechanism to the Hyva Checkout (aka MageWire Checkout)**
+This Magento 2 module adds postcode validation based upon the Magento core `zip_codes.xml` mechanism to the Hyva Checkout (aka MageWire Checkout)
+
+**This module is abandoned and no longer maintained. We have moved to our new [LokiCheckout](https://loki-checkout.com/) instead.**
+
 
 ### Installation
 ```bash
